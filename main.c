@@ -11,6 +11,7 @@ int main() {
     char *oriPath="C:\\Users\\35802\\Desktop\\source\\pdf.pdf";
     char *ComPath="C:\\Users\\35802\\Desktop\\compress\\pdf.tar";
     char *DePath="C:\\Users\\35802\\Desktop\\Decompress\\";
+    char*TestFile="C:\\Users\\35802\\Desktop\\testFile\\pdf.pdf";
     printf("size of file %d\n", file_size(oriPath)/1024);
     FILE *fpin,*fpout;
     CompressInfo *CInfo;
@@ -20,9 +21,9 @@ int main() {
     MapPrint(CInfo);
     HT=HuffmanTreeConstruct(CInfo);
     HuffmanCode(HT->Head,0,CInfo->HuffBranch,pre,CInfo);
-    HuffCodePrint(HT->Head,CInfo,0);
-    CompressFileGen(CInfo,HT,oriPath,ComPath);
-    DeCompress(ComPath,DePath);
+    Test(CInfo,HT,oriPath,TestFile);
+//    CompressFileGen(CInfo,HT,oriPath,ComPath);
+//    DeCompress(ComPath,DePath);
 //    char a[3];
 //    a[0]=0x25;
 //    a[1]=0x50;

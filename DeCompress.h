@@ -29,7 +29,9 @@ CompressInfo *HeadInfoRead(FILE*fp){
 char*GenCompressString(FILE*fp,double basicUnitSize,char*preString,CompressInfo*CInfo){//由原串得到huffman串
     char *temp;
     char *temp1;
+    char*temp11111;
     temp=ReadString(fp,basicUnitSize,CInfo->FileSize);//读字符串，长度为BasicNum*2字节，保证整字节
+    temp11111= BiChConverse(temp,1,basicUnitSize*2);
     if((ftell(fp) >= CInfo->FileSize)) {//到文件末，证明读到的是尾串
         temp = BiChConverse(temp, 1, temp[(int)(basicUnitSize*2)]);
         temp = StringCombina(CInfo->UnitSet[CInfo->UnitNum-1].HuffCode,NULL);

@@ -12,6 +12,7 @@ void CompressUnitInsert(char InsertUnit[MaxUnitSize],CompressInfo*CInfo);
 void HuffCodeConstruct(HuffmanTree*HTree,CompressInfo*CInfo);
 void HuffmanTreePrint(HuffmanTree*HTree);
 void CompressFileGen(CompressInfo*CInfo,HuffmanTree*HTree,char*originPath,char*targetPath);
+void Test(CompressInfo*CInfo,HuffmanTree*HTree,char*originPath,char*targetPath);
 void HuffmanCode(HuffmanNode*node,int num,int branch,char* preChar,CompressInfo*CInfo);
 CompressInfo *HeadInfoRead(FILE*fp);
 void HeadInfoWrite(FILE*fp,CompressInfo*Info);
@@ -386,6 +387,36 @@ void CompressFileGen(CompressInfo*CInfo,HuffmanTree*HTree,char*originPath,char*t
         complete[i]='\0';
         preViousString=StringCombina(preViousString,complete);
         CInfo->completeSize=delta;
+    }
+    writeS=BiChConverse(preViousString,0,0);
+    fwrite(writeS, strlen(writeS),1,fpout);
+    free(writeS);
+    fclose(fpout);
+    fclose(fin);
+    printf("file gen done! size:%d\n", floor(charwritten/1024));
+}
+void Test(CompressInfo*CInfo,HuffmanTree*HTree,char*originPath,char*targetPath){
+    FILE *fpout,*fin;
+    int charwritten=0;
+    int n=0;
+    char*preViousString="\0";
+    char*writeS;
+    fpout= fopen(targetPath,"wb+");//写入文件头
+    fin= fopen(originPath,"rb+");
+    while((ftell(fin)<CInfo->FileSize)){
+        preViousString= StringCombina(preViousString,BiChConverse(ReadString(fin,CInfo->BasicUnitSize,  CInfo->FileSize),1,CInfo->BasicUnitSize*2));
+        n=floor(strlen(preViousString)/8);//当binary单元数为大于等于双整字节时
+        if(n>=1){
+            writeS=StringCut(preViousString,n*(8)-1);
+            writeS=BiChConverse(writeS,0,0);
+            fwrite(writeS, strlen(writeS),1,fpout);
+            charwritten+= strlen(writeS);
+            free(writeS);
+        }
+    }
+    printf("%d---%d\n", ftell(fin),CInfo->FileSize);
+    if(strlen(preViousString)<8){
+        preViousString= BiChConverse(preViousString,1, strlen(preViousString));
     }
     writeS=BiChConverse(preViousString,0,0);
     fwrite(writeS, strlen(writeS),1,fpout);
