@@ -1,0 +1,193 @@
+        -:    0:Source:/home/ubuntu/CLionProjects/untitled/DeCompress.h
+        -:    0:Graph:/home/ubuntu/CLionProjects/untitled/cmake-build-debug-coverage/CMakeFiles/untitled.dir/main.c.gcno
+        -:    0:Data:/home/ubuntu/CLionProjects/untitled/cmake-build-debug-coverage/CMakeFiles/untitled.dir/main.c.gcda
+        -:    0:Runs:1
+        -:    1://
+        -:    2:// Created by 35802 on 2021/12/17.
+        -:    3://
+        -:    4:
+        -:    5:#ifndef HF_DECOMPRESS_H
+        -:    6:#define HF_DECOMPRESS_H
+        -:    7:#include "utils.h"
+        -:    8:#include "BasicStruct.h"
+        -:    9:#include "Compress.h"
+function HeadInfoWrite called 1 returned 100% blocks executed 100%
+        1:   10:void HeadInfoWrite(FILE*fp,CompressInfo*Info){
+        1:   11:    int num=0;
+        1:   12:    fwrite(Info,sizeof (CompressInfo),1,fp);
+        1:   12-block  0
+call    0 returned 1
+        1:   13:    num=strlen(Info->name)+1;
+        1:   14:    fwrite(&num,sizeof (int),1,fp);
+call    0 returned 1
+        1:   15:    fwrite(Info->name,strlen(Info->name)+1,1,fp);
+call    0 returned 1
+        1:   16:    num=strlen(Info->Extension)+1;
+        1:   17:    fwrite(&num,sizeof (int),1,fp);
+call    0 returned 1
+        1:   18:    fwrite(Info->Extension,strlen(Info->Extension)+1,1,fp);
+call    0 returned 1
+        -:   19:
+        1:   20:    fwrite(Info->UnitSet,sizeof (CompressNode)*(Info->UnitNum),1,fp);
+call    0 returned 1
+        1:   21:    int i=0;
+      258:   22:    for(i=0;i<Info->UnitNum;++i){
+      258:   22-block  0
+branch  0 taken 257
+branch  1 taken 1 (fallthrough)
+      257:   23:        num=strlen(Info->UnitSet[i].unit)+1;
+      257:   24:        fwrite(&num,sizeof (int),1,fp);
+      257:   24-block  0
+call    0 returned 257
+      257:   25:        fwrite(Info->UnitSet[i].unit, strlen(Info->UnitSet[i].unit)+1,1,fp);
+call    0 returned 257
+      257:   26:        num=strlen(Info->UnitSet[i].HuffCode)+1;
+      257:   27:        fwrite(&num,sizeof (int),1,fp);
+call    0 returned 257
+      257:   28:        fwrite(Info->UnitSet[i].HuffCode, strlen(Info->UnitSet[i].HuffCode)+1,1,fp);
+call    0 returned 257
+        -:   29:    }
+        1:   30:}
+function GenCompressString called 23460 returned 100% blocks executed 100%
+    23460:   31:char*GenCompressString(FILE*fp,double basicUnitSize,char*preString,CompressInfo*CInfo){//由原串得到huffman串
+        -:   32:    char *temp;
+        -:   33:    char *temp1;
+    23460:   34:    temp=ReadString(fp,basicUnitSize,CInfo->FileSize);//读字符串，长度为BasicNum*2字节，保证整字节
+    23460:   34-block  0
+call    0 returned 23460
+    23460:   35:    if((ftell(fp) >= CInfo->FileSize)) {//到文件末，证明读到的是尾串
+call    0 returned 23460
+branch  1 taken 2805 (fallthrough)
+branch  2 taken 20655
+     2805:   36:        temp = BiChConverse(temp, 1, temp[(int)(basicUnitSize*2)]);
+     2805:   36-block  0
+call    0 returned 2805
+     2805:   37:        temp = StringCombina(CInfo->UnitSet[CInfo->UnitNum-1].HuffCode,NULL);
+call    0 returned 2805
+        -:   38:    } else{//证明读到的非尾串
+    20655:   39:        temp = BiChConverse(temp, 1, (int)(basicUnitSize*2));
+    20655:   39-block  0
+call    0 returned 20655
+    20655:   40:        temp1= StringCut(temp,(int)(basicUnitSize*2*8)/2-1);
+call    0 returned 20655
+    20655:   41:        temp = StringCombina(CInfo->UnitSet[FindInMap(temp1,CInfo)].HuffCode,CInfo->UnitSet[FindInMap(temp,CInfo)].HuffCode);
+call    0 returned 20655
+call    1 returned 20655
+call    2 returned 20655
+        -:   42:    }
+    23460:   43:    temp = StringCombina(preString,temp);
+    23460:   43-block  0
+call    0 returned 23460
+    23460:   44:    if(*preString!='\0')free(preString);
+branch  0 taken 20638 (fallthrough)
+branch  1 taken 2822
+    20638:   44-block  0
+    23460:   45:    return temp;
+    23460:   45-block  0
+        -:   46:}
+function HuffSearch called 0 returned 0% blocks executed 0%
+    #####:   47:HuffmanNode *HuffSearch(HuffmanNode *node,CompressInfo*CInfo,char*preString){
+    #####:   48:    if(strlen(preString)<CInfo->bit||node->code==Node_SINGAL){
+    %%%%%:   48-block  0
+branch  0 never executed
+branch  1 never executed
+    %%%%%:   48-block  1
+branch  2 never executed
+branch  3 never executed
+    #####:   49:        exit(114514);
+    %%%%%:   49-block  0
+call    0 never executed
+        -:   50:    }else{
+    #####:   51:        char *now= StringCut(preString,CInfo->bit-1);
+    %%%%%:   51-block  0
+call    0 never executed
+    #####:   52:        char *a=BinaryToDemical(now);
+call    0 never executed
+    #####:   53:        int c=*a-48;
+    #####:   54:        return &node->Child[c];
+        -:   55:    }
+        -:   56:}
+function DeCompress called 0 returned 0% blocks executed 0%
+    #####:   57:void DeCompress(char*oriPath,char*tarPath){
+    #####:   58:    FILE *fori= fopen(oriPath,"rb+");
+    %%%%%:   58-block  0
+call    0 never executed
+    #####:   59:    CompressInfo *CInfo= HeadInfoRead(fori);
+call    0 never executed
+    #####:   60:    HuffmanTree *HT=HuffmanTreeConstruct(CInfo);
+call    0 never executed
+    #####:   61:    HuffmanCode(HT->Head,1,CInfo->HuffBranch,"\0",CInfo);
+call    0 never executed
+    #####:   62:    char *outname= StringCombina(tarPath, StringCombina(CInfo->name,CInfo->Extension));
+call    0 never executed
+call    1 never executed
+    #####:   63:    FILE *ftar= fopen(outname,"wb+");
+call    0 never executed
+    #####:   64:    HuffmanNode *Hn=HT->Head;
+    #####:   65:    char*preString="\0";
+    #####:   66:    char*preBiString="\0";
+        -:   67:    char*write;
+    #####:   68:    while(!feof(fori)){
+    %%%%%:   68-block  0
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    #####:   69:        preString= StringCombina(preString, ReadString(fori,(double )CInfo->bit*4, file_size(oriPath)));
+    %%%%%:   69-block  0
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:   70:        while(strlen(preString)>=3){
+    %%%%%:   70-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:   71:            if(!feof(fori)||CInfo->completeSize==0){
+    %%%%%:   71-block  0
+call    0 never executed
+branch  1 never executed
+branch  2 never executed
+    %%%%%:   71-block  1
+branch  3 never executed
+branch  4 never executed
+    #####:   72:                if(Hn->code==Node_SINGAL){
+    %%%%%:   72-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:   73:                    preBiString= StringCombina(preBiString,CInfo->UnitSet[Hn->num].unit);
+    %%%%%:   73-block  0
+call    0 never executed
+    #####:   74:                    Hn=HT->Head;
+        -:   75:                }else{
+    #####:   76:                    Hn= HuffSearch(Hn,CInfo,preString);
+    %%%%%:   76-block  0
+call    0 never executed
+        -:   77:                }
+        -:   78:            }
+        -:   79:        }
+    #####:   80:        if(strlen(preBiString)>=8){
+    %%%%%:   80-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:   81:            write=BiChConverse(StringCut(preString, 8*((int)strlen(preString)/8)-1),0,0);
+    %%%%%:   81-block  0
+call    0 never executed
+call    1 never executed
+    #####:   82:            fwrite(write, sizeof (char), strlen(write),ftar);
+call    0 never executed
+        -:   83:        }
+        -:   84:    }
+    #####:   85:    if(CInfo->completeSize!=0){
+    %%%%%:   85-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:   86:        preString= StringCut(preString,CInfo->bit-CInfo->completeSize-1);
+    %%%%%:   86-block  0
+call    0 never executed
+        -:   87:    }
+    #####:   88:    fclose(fori);
+    %%%%%:   88-block  0
+call    0 never executed
+    #####:   89:    fclose(ftar);
+call    0 never executed
+    #####:   90:}
+        -:   91:#endif //HF_DECOMPRESS_H

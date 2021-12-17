@@ -1,0 +1,540 @@
+        -:    0:Source:/home/ubuntu/CLionProjects/untitled/utils.h
+        -:    0:Graph:/home/ubuntu/CLionProjects/untitled/cmake-build-debug-coverage/CMakeFiles/untitled.dir/main.c.gcno
+        -:    0:Data:/home/ubuntu/CLionProjects/untitled/cmake-build-debug-coverage/CMakeFiles/untitled.dir/main.c.gcda
+        -:    0:Runs:1
+        -:    1://
+        -:    2:// Created by 35802 on 2021/12/17.
+        -:    3://
+        -:    4:
+        -:    5:#ifndef HF_UTILS_H
+        -:    6:#define HF_UTILS_H
+        -:    7:#include "stdlib.h"
+        -:    8:#include "math.h"
+        -:    9:#include "string.h"
+        -:   10:char*DemicalToBinary(char*demical,int branch);
+        -:   11:char*BinaryToDemical(char*binary);
+        -:   12:char*BiChar(char*Binary);
+        -:   13:char*BinaryAdd(char*add1,char *add2);
+        -:   14:char*StringCut(char*a,int pos);
+        -:   15:char*StringCombina(char*a,char*b);
+        -:   16:int strcmpReg(char*a,char*b,int size);
+function strcmpReg called 0 returned 0% blocks executed 0%
+    #####:   17:int strcmpReg(char*a,char*b,int size){
+    #####:   18:    int i=0;
+    #####:   19:    for(i=0;i<size;++i){
+    %%%%%:   19-block  0
+    %%%%%:   19-block  1
+branch  0 never executed
+branch  1 never executed
+    #####:   20:        if(!a||!b){
+    %%%%%:   20-block  0
+branch  0 never executed
+branch  1 never executed
+    %%%%%:   20-block  1
+branch  2 never executed
+branch  3 never executed
+    #####:   21:            return 0;
+    %%%%%:   21-block  0
+        -:   22:        }
+    #####:   23:        if(b[i]==a[i]){
+    %%%%%:   23-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:   24:            continue;
+    %%%%%:   24-block  0
+        -:   25:        } else{
+    #####:   26:            return 0;
+    %%%%%:   26-block  0
+        -:   27:        }
+        -:   28:    }
+    #####:   29:    return 1;
+    %%%%%:   29-block  0
+        -:   30:}
+        -:   31:
+function DemicalToBinary called 257 returned 100% blocks executed 94%
+      257:   32:char*DemicalToBinary(char *demical,int Branch){
+     257*:   33:    int branch=(log2(Branch)-(int)log2(Branch)==0)?log2(Branch): log2(Branch)+1;
+      257:   33-block  0
+branch  0 taken 257 (fallthrough)
+branch  1 taken 0
+      257:   33-block  1
+    %%%%%:   33-block  2
+      257:   34:    int unitSize=branch+1;
+        -:   35:    int u;
+        -:   36:    char *temp;
+      257:   37:    char*out=(char*) malloc(((strlen(demical)-1)*branch+1)*sizeof(char ));
+      257:   38:    char*unit=(char*)malloc(unitSize*sizeof(char));
+      257:   39:    char*unit1=(char*)malloc(unitSize*sizeof(char));
+      257:   40:    int i=0;
+      771:   41:    for(i=0;i<unitSize;++i){
+      257:   41-block  0
+      514:   41-block  1
+      771:   41-block  2
+branch  0 taken 514
+branch  1 taken 257 (fallthrough)
+      514:   42:        unit[i]='0';
+      514:   43:        if(i==unitSize-2){
+      514:   43-block  0
+branch  0 taken 257 (fallthrough)
+branch  1 taken 257
+      257:   44:            unit[i]='1';
+      257:   44-block  0
+        -:   45:        }
+      514:   46:        if(i==unitSize-1){
+      514:   46-block  0
+branch  0 taken 257 (fallthrough)
+branch  1 taken 257
+      257:   47:            unit[i]='\0';
+      257:   47-block  0
+        -:   48:        }
+        -:   49:    }
+      771:   50:    for(i=0;i<unitSize;++i){
+      257:   50-block  0
+      514:   50-block  1
+      771:   50-block  2
+branch  0 taken 514
+branch  1 taken 257 (fallthrough)
+      514:   51:        unit1[i]='0';
+      514:   52:        if(i==unitSize-1){
+      514:   52-block  0
+branch  0 taken 257 (fallthrough)
+branch  1 taken 257
+      257:   53:            unit1[i]='\0';
+      257:   53-block  0
+        -:   54:        }
+        -:   55:    }
+      257:   56:    int j=0;
+     2622:   57:    for(j=0;j< strlen(demical);++j){
+      257:   57-block  0
+     2365:   57-block  1
+     2622:   57-block  2
+branch  0 taken 2365
+branch  1 taken 257 (fallthrough)
+     2365:   58:        u=demical[j]-48;
+     2365:   59:        int z=0;
+     2365:   60:        if(u!=0){
+     2365:   60-block  0
+branch  0 taken 1244 (fallthrough)
+branch  1 taken 1121
+     2488:   61:            for(z=0;z<u;++z){
+     1244:   61-block  0
+     1244:   61-block  1
+     2488:   61-block  2
+branch  0 taken 1244
+branch  1 taken 1244
+     1244:   62:                if(z==0){
+     1244:   62-block  0
+branch  0 taken 1244 (fallthrough)
+branch  1 taken 0
+     1244:   63:                    temp= unit;
+     1244:   64:                    continue;
+     1244:   64-block  0
+        -:   65:                }
+    #####:   66:                temp=BinaryAdd(temp, unit);
+    %%%%%:   66-block  0
+call    0 never executed
+        -:   67:            }
+        -:   68:        }
+        -:   69:        else{
+     1121:   70:            temp=unit1;
+     1121:   70-block  0
+        -:   71:        }
+     7095:   72:        for(z=0;z<unitSize;++z){
+     2365:   72-block  0
+     7095:   72-block  1
+branch  0 taken 4730
+branch  1 taken 2365 (fallthrough)
+     4730:   73:            out[j*branch+z]=temp[z];
+     4730:   73-block  0
+        -:   74:        }
+        -:   75:    }
+      257:   76:    return out;
+      257:   76-block  0
+        -:   77:}
+        -:   78:
+        -:   79:
+        -:   80://char*BiChar(char*Binary){
+        -:   81://int outLen= strlen(Binary)/8+1;
+        -:   82://    char*outChar=(char *) malloc(sizeof (char)*outLen);
+        -:   83://    outChar[outLen-1]='\0';
+        -:   84://    int j=0;
+        -:   85://    int i=j=0;
+        -:   86://    char code=0x0;
+        -:   87://    char unit=0x01;
+        -:   88://    for(i=0;i<outLen-1;++i){
+        -:   89://        code=0x0;
+        -:   90://        unit=0x01;
+        -:   91://        for(j=(i+1)*8-1;j>=i*8;--j){
+        -:   92://            code=code|(Binary[j]==0?code:unit);
+        -:   93://            unit=unit<<1;
+        -:   94://        }
+        -:   95://        outChar[i]=code;
+        -:   96://    }
+        -:   97://    return outChar;
+        -:   98://}
+        -:   99:
+function BinaryAdd called 0 returned 0% blocks executed 0%
+    #####:  100:char*BinaryAdd(char*add1,char *add2){//二进制字符串加法
+    #####:  101:    int l1=0,l2=0;
+    #####:  102:    l1= strlen(add1);
+    #####:  103:    l2= strlen(add2);
+    #####:  104:    int cin=0;
+    #####:  105:    int a1=0,a2=0;
+    #####:  106:    char *out=(char*) malloc(sizeof(char)*(l1+1));
+    #####:  107:    out[l1]='\0';
+    #####:  108:    if(l1==l2){
+    %%%%%:  108-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  109:        int i=0;
+    #####:  110:        for(i= l1-1;i>=0;--i){
+    %%%%%:  110-block  0
+    %%%%%:  110-block  1
+branch  0 never executed
+branch  1 never executed
+    #####:  111:            a1=add1[i]-48;
+    #####:  112:            a2=add2[i]-48;
+    #####:  113:            switch (a1+a2+cin) {
+    %%%%%:  113-block  0
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+branch  4 never executed
+    #####:  114:                case 0: out[i]='0';
+    #####:  115:                    cin=0;break;
+    %%%%%:  115-block  0
+    #####:  116:                case 1:out[i]='1';
+    #####:  117:                    cin=0;break;
+    %%%%%:  117-block  0
+    #####:  118:                case 2:out[i]='0';
+    #####:  119:                    cin=1;break;
+    %%%%%:  119-block  0
+    #####:  120:                case 3:out[i]='1';
+    #####:  121:                    cin=1;break;
+    %%%%%:  121-block  0
+        -:  122:            }
+    #####:  123:        }
+    %%%%%:  123-block  0
+    #####:  124:        return out;
+    %%%%%:  124-block  0
+        -:  125:    }else{
+    #####:  126:        exit(0);
+    %%%%%:  126-block  0
+call    0 never executed
+        -:  127:    }
+        -:  128:}
+        -:  129:
+function BiChConverse called 66807 returned 100% blocks executed 92%
+    66807:  130:char*BiChConverse(char*inputS,int mode,int size){//字符和字符对应的二进制串转换，1为字符转二进制串(1模式下必须保证size1)，0为反过来
+        -:  131:    char ch;
+    66807:  132:    char *out1="\0";
+    66807:  133:    char *out="\0";
+    66807:  134:    char *BiCode="\0";
+    66807:  135:    char *a=(char*) malloc(sizeof (char)*2);
+    66807:  136:    a[1]='\0';
+    66807:  137:    a[0]=0x00;
+    66807:  138:    char unit=0x01;
+    66807:  139:    if(!inputS){
+    66807:  139-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 66807
+    #####:  140:        return NULL;
+    %%%%%:  140-block  0
+        -:  141:    }
+    66807:  142:    if(mode){
+    66807:  142-block  0
+branch  0 taken 44116 (fallthrough)
+branch  1 taken 22691
+    44116:  143:        int i=0;
+    44116:  144:        if(size!=0){
+    44116:  144-block  0
+branch  0 taken 41312 (fallthrough)
+branch  1 taken 2804
+   123934:  145:            while(i!=size){
+    41312:  145-block  0
+   123934:  145-block  1
+branch  0 taken 82622
+branch  1 taken 41312
+    82622:  146:                unit=0x01;
+    82622:  147:                out1="\0";
+   743598:  148:                while(unit!=0x00){
+    82622:  148-block  0
+   743598:  148-block  1
+branch  0 taken 660976
+branch  1 taken 82622 (fallthrough)
+   660976:  149:                    if((inputS[i]&unit)==unit){//证明该位为1
+   660976:  149-block  0
+branch  0 taken 149921 (fallthrough)
+branch  1 taken 511055
+   149921:  150:                        out1=StringCombina("1",out1);
+   149921:  150-block  0
+call    0 returned 149921
+        -:  151:                    }else{
+   511055:  152:                        out1=StringCombina("0",out1);
+   511055:  152-block  0
+call    0 returned 511055
+        -:  153:                    }
+   660976:  154:                    unit=unit<<1;
+   660976:  154-block  0
+        -:  155:                }
+    82622:  156:                out=StringCombina(out,out1);
+    82622:  156-block  0
+call    0 returned 82622
+    82622:  157:                ++i;
+        -:  158:            }
+        -:  159:        }else{
+     2804:  160:            unit=0x01;
+     2804:  161:            out1="\0";
+    25236:  162:            while(unit!=0x00){
+     2804:  162-block  0
+    25236:  162-block  1
+branch  0 taken 22432
+branch  1 taken 2804 (fallthrough)
+    22432:  163:                if((inputS[i]&unit)==unit){//证明该位为1
+    22432:  163-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 22432
+    #####:  164:                    out1=StringCombina("1",out1);
+    %%%%%:  164-block  0
+call    0 never executed
+        -:  165:                }else{
+    22432:  166:                    out1=StringCombina("0",out1);
+    22432:  166-block  0
+call    0 returned 22432
+        -:  167:                }
+    22432:  168:                unit=unit<<1;
+    22432:  168-block  0
+        -:  169:            }
+     2804:  170:            out=StringCombina(out,out1);
+     2804:  170-block  0
+call    0 returned 2804
+        -:  171:        }
+        -:  172://        free(inputS);
+    44116:  173:        return out;
+    44116:  173-block  0
+        -:  174:    } else{
+    22691:  175:        int len= strlen(inputS);
+    22691:  176:        if(len%8!=0){
+    22691:  176-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 22691
+    #####:  177:            return NULL;
+    %%%%%:  177-block  0
+        -:  178:        }else{
+    22691:  179:            BiCode=StringCombina(BiCode,inputS);
+    22691:  179-block  0
+call    0 returned 22691
+    51051:  180:            while(*BiCode!='\0'){
+    51051:  180-block  0
+branch  0 taken 28360
+branch  1 taken 22691 (fallthrough)
+        -:  181:                char* a1;
+    28360:  182:                int i=0;
+    28360:  183:                a[0]=0x00;
+    28360:  184:                unit=0x01;
+    28360:  185:                a1=StringCut(BiCode,7);
+    28360:  185-block  0
+call    0 returned 28360
+   255240:  186:                for(i=7;i>=0;--i){
+   255240:  186-block  0
+branch  0 taken 226880
+branch  1 taken 28360 (fallthrough)
+   226880:  187:                    if(a1[i]=='1'){
+   226880:  187-block  0
+branch  0 taken 110578 (fallthrough)
+branch  1 taken 116302
+   110578:  188:                        a[0]=a[0]|unit;
+   110578:  188-block  0
+        -:  189:                    }
+   226880:  190:                    unit=unit<<1;
+   226880:  190-block  0
+        -:  191:                }
+    28360:  192:                out=StringCombina(out,a);
+    28360:  192-block  0
+call    0 returned 28360
+        -:  193:            }
+    22691:  194:            return out;
+    22691:  194-block  0
+        -:  195:        }
+        -:  196:    }
+        -:  197:}
+        -:  198:
+function StringCombina called 867575 returned 100% blocks executed 80%
+   867575:  199:char*StringCombina(char*a,char*b){
+        -:  200:    char*c;
+  867575*:  201:    if(!a&&!b){
+   867575:  201-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 867575
+    %%%%%:  201-block  1
+branch  2 never executed
+branch  3 never executed
+    #####:  202:        return NULL;
+    %%%%%:  202-block  0
+        -:  203:    }
+   867575:  204:    if(!b&&a){
+   867575:  204-block  0
+branch  0 taken 3064 (fallthrough)
+branch  1 taken 864511
+     3064:  204-block  1
+branch  2 taken 3064 (fallthrough)
+branch  3 taken 0
+     3064:  205:        c = (char *) malloc(strlen(a) + 1);
+     3064:  205-block  0
+   864511:  206:    }else if(b&&!a){
+   864511:  206-block  0
+branch  0 taken 864511 (fallthrough)
+branch  1 taken 0
+   864511:  206-block  1
+branch  2 taken 0 (fallthrough)
+branch  3 taken 864511
+    #####:  207:        c=(char*) malloc(strlen(b)+1);
+    %%%%%:  207-block  0
+        -:  208:    }//局部变量，用malloc申请内存
+        -:  209:    else{
+   864511:  210:        c=(char*) malloc(strlen(a)+ strlen(b)+1);
+   864511:  210-block  0
+        -:  211:    }
+   867575:  212:    if (c == NULL) {
+   867575:  212-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 867575
+    #####:  213:        printf("error\n");
+    %%%%%:  213-block  0
+call    0 never executed
+    #####:  214:        exit (11451415);
+call    0 never executed
+        -:  215:    }
+   867575:  216:    char *tempc = c; //把首地址存下来
+   867575:  217:    if(a){
+   867575:  217-block  0
+branch  0 taken 867575 (fallthrough)
+branch  1 taken 0
+  2027019:  218:        while (*a != '\0') {*c++ = *a++;}
+   867575:  218-block  0
+  1159444:  218-block  1
+  2027019:  218-block  2
+branch  0 taken 1159444
+branch  1 taken 867575 (fallthrough)
+        -:  219:    }
+   867575:  220:    if(b){
+   867575:  220-block  0
+branch  0 taken 864511 (fallthrough)
+branch  1 taken 3064
+  4593673:  221:        while (*b != '\0') {*c++ = *b++;}
+   864511:  221-block  0
+  3729162:  221-block  1
+  4593673:  221-block  2
+branch  0 taken 3729162
+branch  1 taken 864511 (fallthrough)
+        -:  222:    }
+   867575:  223:    if(*c!='\0'){
+   867575:  223-block  0
+branch  0 taken 2 (fallthrough)
+branch  1 taken 867573
+        2:  224:        *c='\0';
+        2:  224-block  0
+        -:  225:    }
+        -:  226:    //注意，此时指针c已经指向拼接之后的字符串的结尾'\0' !
+   867575:  227:    return tempc;//返回值是局部malloc申请的指针变量，需在函数调用结束后free之
+   867575:  227-block  0
+        -:  228:}
+function StringCut called 92104 returned 100% blocks executed 83%
+    92104:  229:char*StringCut(char*originString,int pos){
+    92104:  230:    if(originString==NULL){
+    92104:  230-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 92104
+    #####:  231:        return NULL;
+    %%%%%:  231-block  0
+        -:  232:    }
+    92104:  233:    int Le= strlen(originString);
+    92104:  234:    if(pos+1>Le){
+    92104:  234-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 92104
+    #####:  235:        return NULL;
+    %%%%%:  235-block  0
+        -:  236:    }else{
+    92104:  237:        char*out=(char*) malloc(sizeof (char)*(pos+2));
+    92104:  238:        int i=0;
+   874302:  239:        for(i=0;i<=pos;++i){
+    92104:  239-block  0
+   874302:  239-block  1
+branch  0 taken 782198
+branch  1 taken 92104 (fallthrough)
+   782198:  240:            out[i]=originString[i];
+   782198:  241:            originString[i]='\0';
+   782198:  241-block  0
+        -:  242:        }
+    92104:  243:        out[i]='\0';
+    92104:  244:        int j=0;
+   544198:  245:        for(j=0;originString[i+j]!='\0';++j){
+    92104:  245-block  0
+   544198:  245-block  1
+branch  0 taken 452094
+branch  1 taken 92104 (fallthrough)
+   452094:  246:            originString[j]=originString[i+j];
+   452094:  247:            originString[i+j]='\0';
+   452094:  247-block  0
+        -:  248:        }
+    92104:  249:        originString=realloc(originString, strlen(originString)+1);
+    92104:  250:        return out;
+    92104:  250-block  0
+        -:  251:    }
+        -:  252:}
+function BinaryToDemical called 0 returned 0% blocks executed 0%
+    #####:  253:char*BinaryToDemical(char*binary){
+    #####:  254:    if(binary==NULL){
+    %%%%%:  254-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  255:        exit(114514);
+    %%%%%:  255-block  0
+call    0 never executed
+        -:  256:    }
+    #####:  257:    int length= strlen(binary);
+        -:  258:    int i;
+    #####:  259:    char *decimal=(char*) malloc(sizeof (char)*2);
+    #####:  260:    decimal[1]='\0';
+    #####:  261:    int sum=0;
+    #####:  262:    for(i=0;i<length;++i){
+    %%%%%:  262-block  0
+    %%%%%:  262-block  1
+branch  0 never executed
+branch  1 never executed
+    #####:  263:        sum+=(binary[i]=='1')? pow(2,i):0;
+    %%%%%:  263-block  0
+branch  0 never executed
+branch  1 never executed
+    %%%%%:  263-block  1
+    %%%%%:  263-block  2
+    %%%%%:  263-block  3
+        -:  264:    }
+    #####:  265:    decimal[0]=sum+48;
+    #####:  266:    return decimal;
+    %%%%%:  266-block  0
+        -:  267:}
+function file_size called 2 returned 100% blocks executed 88%
+        2:  268:int file_size(char* filename)//获取文件名为filename的文件大小。
+        -:  269:{
+        2:  270:    FILE *fp = fopen(filename, "rb");//打开文件。
+        2:  270-block  0
+call    0 returned 2
+        -:  271:    int size;
+        2:  272:    if(fp == NULL) // 打开文件失败
+branch  0 taken 0 (fallthrough)
+branch  1 taken 2
+    #####:  273:        return -1;
+    %%%%%:  273-block  0
+        2:  274:    fseek(fp, 0, SEEK_END);//定位文件指针到文件尾。
+        2:  274-block  0
+call    0 returned 2
+        2:  275:    size=ftell(fp);//获取文件指针偏移量，即文件大小。
+call    0 returned 2
+        2:  276:    fclose(fp);//关闭文件。
+call    0 returned 2
+        2:  277:    return size;
+        -:  278:}
+        -:  279:#endif //HF_UTILS_H

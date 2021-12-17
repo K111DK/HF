@@ -1,0 +1,39 @@
+        -:    0:Source:/home/ubuntu/CLionProjects/untitled/main.c
+        -:    0:Graph:/home/ubuntu/CLionProjects/untitled/cmake-build-debug-coverage/CMakeFiles/untitled.dir/main.c.gcno
+        -:    0:Data:/home/ubuntu/CLionProjects/untitled/cmake-build-debug-coverage/CMakeFiles/untitled.dir/main.c.gcda
+        -:    0:Runs:1
+        -:    1:#include <stdio.h>
+        -:    2:#include "DeCompress.h"
+function main called 1 returned 100% blocks executed 100%
+        1:    3:int main() {
+        -:    4://char *a="0100";
+        -:    5://char *b="1234";
+        -:    6://char *f= BinaryToDemical(a);
+        -:    7://f;
+        -:    8://    printf("%s\n",f);
+        -:    9://    char*oriPath="C:\\Users\\35802\\Desktop\\HuffmanCompress\\实验08_信号处理及有限状态机.pdf";
+        -:   10://    char*tarPath="C:\\Users\\35802\\Desktop\\HuffmanCompress\\实验08_信号处理及有限状态机.taz";
+        1:   11:    char *oriPath="/home/ubuntu/Desktop/a.jpeg";
+        1:   12:    char *tarPath="/home/ubuntu/Desktop/a.taz";
+        1:   13:    printf("size of file %d\n", file_size(oriPath)/1024);
+        1:   13-block  0
+call    0 returned 1
+call    1 returned 1
+        -:   14:    FILE *fpin,*fpout;
+        -:   15:    CompressInfo *CInfo;
+        -:   16:    HuffmanTree *HT;
+        1:   17:    char*pre="\0";
+        1:   18:    CInfo=MapConstruct(1,2,oriPath);
+call    0 returned 1
+        1:   19:    MapPrint(CInfo);
+call    0 returned 1
+        1:   20:    HT=HuffmanTreeConstruct(CInfo);
+call    0 returned 1
+        1:   21:    HuffmanCode(HT->Head,0,CInfo->HuffBranch,pre,CInfo);
+call    0 returned 1
+        1:   22:    HuffCodePrint(HT->Head,CInfo,0);
+call    0 returned 1
+        1:   23:    CompressFileGen(CInfo,HT,oriPath,tarPath);
+call    0 returned 1
+        1:   24:    return 0;
+        -:   25:}

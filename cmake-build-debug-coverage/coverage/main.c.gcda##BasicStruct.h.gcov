@@ -1,0 +1,108 @@
+        -:    0:Source:/home/ubuntu/CLionProjects/untitled/BasicStruct.h
+        -:    0:Graph:/home/ubuntu/CLionProjects/untitled/cmake-build-debug-coverage/CMakeFiles/untitled.dir/main.c.gcno
+        -:    0:Data:/home/ubuntu/CLionProjects/untitled/cmake-build-debug-coverage/CMakeFiles/untitled.dir/main.c.gcda
+        -:    0:Runs:1
+        -:    1://
+        -:    2:// Created by 35802 on 2021/12/17.
+        -:    3://
+        -:    4:#ifndef HF_BASICSTRUCT_H
+        -:    5:#define HF_BASICSTRUCT_H
+        -:    6:#include <stdio.h>
+        -:    7:#include "utils.h"
+        -:    8:#define MaxUnitSize 40
+        -:    9:#define Node_SINGAL -1
+        -:   10:#define INIT_MAX_SIZE 16000
+        -:   11:typedef struct CompressNode{
+        -:   12:    char *unit;//单元翻译过来的二进制码字符串
+        -:   13:    char *HuffCode;//huffman编码的二进制形式
+        -:   14:    unsigned int appearNum;//该单元出现次数
+        -:   15:}CompressNode;typedef struct CompressInfo{
+        -:   16:    double BasicUnitSize;//基本单元的大小
+        -:   17:    int HuffBranch;//(huffman树叉数)
+        -:   18:    int TotalCharNum;//文件大小(包含多少基本单元)
+        -:   19:    int UnitNum;//单元种类数
+        -:   20:    int FileSize;
+        -:   21:    char *name;//文件名
+        -:   22:    char  *Extension;//后缀名
+        -:   23:    CompressNode*UnitSet;//符号单元
+        -:   24:    int bit;
+        -:   25:    int completeSize;
+        -:   26:}CompressInfo;
+        -:   27:typedef struct HuffmanNode{
+        -:   28:    int num;
+        -:   29:    int value;
+        -:   30:    int code;
+        -:   31:    struct HuffmanNode*Child;
+        -:   32:}HuffmanNode;
+        -:   33:typedef struct HuffmanTree{
+        -:   34:    HuffmanNode *Head;
+        -:   35:    int deep;
+        -:   36:    int branch;
+        -:   37:}HuffmanTree;
+        -:   38:typedef struct DynamicArray{
+        -:   39:    HuffmanNode**Array;
+        -:   40:    int PreviousSize;
+        -:   41:}DynamicArray;
+function Init called 1 returned 100% blocks executed 100%
+        1:   42:DynamicArray* Init(int initSize){
+        1:   43:    DynamicArray*Darray=(DynamicArray*) malloc(sizeof (DynamicArray));
+        1:   44:    Darray->PreviousSize=initSize;
+        1:   45:    Darray->Array=(HuffmanNode**) malloc(sizeof(HuffmanNode*)*initSize);
+        1:   46:}
+        -:   47:
+function AssertArray called 513 returned 100% blocks executed 67%
+      513:   48:void AssertArray(DynamicArray*Darray,int num,HuffmanNode*node){
+      513:   49:    if(num>=Darray->PreviousSize){
+      513:   49-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 513
+    #####:   50:        Darray->PreviousSize=num+1;
+    #####:   51:        Darray->Array= realloc(Darray->Array,(num+1)*sizeof (HuffmanNode*));
+    %%%%%:   51-block  0
+        -:   52:    }
+      513:   53:    Darray->Array[num]=node;
+      513:   54:}
+        -:   55:
+function ReadArray called 513 returned 100% blocks executed 67%
+      513:   56:HuffmanNode* ReadArray(DynamicArray*Darray,int num){
+      513:   57:    if(num>=Darray->PreviousSize){
+      513:   57-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 513
+    #####:   58:        return NULL;
+    %%%%%:   58-block  0
+        -:   59:    }else{
+      513:   60:        if(Darray->Array[num]==NULL){
+      513:   60-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 513
+    #####:   61:            printf("1\n");
+    %%%%%:   61-block  0
+call    0 never executed
+        -:   62:        }
+      513:   63:        return Darray->Array[num];
+      513:   63-block  0
+        -:   64:    }
+        -:   65:}
+function DelectArray called 0 returned 0% blocks executed 0%
+    #####:   66:void DelectArray(DynamicArray*Darray,int num){
+    #####:   67:    if(num==285){
+    %%%%%:   67-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:   68:        printf("1\n");
+    %%%%%:   68-block  0
+call    0 never executed
+        -:   69:    }
+    #####:   70:    if(num>=Darray->PreviousSize){
+    %%%%%:   70-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:   71:        return;
+    %%%%%:   71-block  0
+        -:   72:    }else{
+    #####:   73:        Darray->Array[num]=NULL;
+    %%%%%:   73-block  0
+        -:   74:    }
+        -:   75:}
+        -:   76:#endif //HF_BASICSTRUCT_H

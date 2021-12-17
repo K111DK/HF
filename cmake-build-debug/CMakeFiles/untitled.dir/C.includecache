@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/35802/Desktop/untitled/BasicStruct.h
+stdio.h
+-
+utils.h
+C:/Users/35802/Desktop/untitled/utils.h
+
+C:/Users/35802/Desktop/untitled/Compress.h
+BasicStruct.h
+C:/Users/35802/Desktop/untitled/BasicStruct.h
+utils.h
+C:/Users/35802/Desktop/untitled/utils.h
+
+C:/Users/35802/Desktop/untitled/DeCompress.h
+utils.h
+C:/Users/35802/Desktop/untitled/utils.h
+BasicStruct.h
+C:/Users/35802/Desktop/untitled/BasicStruct.h
+Compress.h
+C:/Users/35802/Desktop/untitled/Compress.h
+
+C:/Users/35802/Desktop/untitled/main.c
+stdio.h
+-
+DeCompress.h
+C:/Users/35802/Desktop/untitled/DeCompress.h
+
+C:/Users/35802/Desktop/untitled/utils.h
+stdlib.h
+C:/Users/35802/Desktop/untitled/stdlib.h
+math.h
+C:/Users/35802/Desktop/untitled/math.h
+string.h
+C:/Users/35802/Desktop/untitled/string.h
+

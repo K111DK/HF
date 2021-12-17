@@ -1,0 +1,740 @@
+        -:    0:Source:/home/ubuntu/CLionProjects/untitled/Compress.h
+        -:    0:Graph:/home/ubuntu/CLionProjects/untitled/cmake-build-debug-coverage/CMakeFiles/untitled.dir/main.c.gcno
+        -:    0:Data:/home/ubuntu/CLionProjects/untitled/cmake-build-debug-coverage/CMakeFiles/untitled.dir/main.c.gcda
+        -:    0:Runs:1
+        -:    1://
+        -:    2:// Created by 35802 on 2021/12/17.
+        -:    3://
+        -:    4:
+        -:    5:#ifndef HF_COMPRESS_H
+        -:    6:#define HF_COMPRESS_H
+        -:    7:#include "BasicStruct.h"
+        -:    8:#include "utils.h"
+        -:    9:CompressInfo *MapConstruct(double basicUnitSize,int BranchSize,char*originPath);
+        -:   10:HuffmanTree *HuffmanTreeConstruct(CompressInfo*CInfo);
+        -:   11:void CompressUnitInsert(char InsertUnit[MaxUnitSize],CompressInfo*CInfo);
+        -:   12:void HuffCodeConstruct(HuffmanTree*HTree,CompressInfo*CInfo);
+        -:   13:void HuffmanTreePrint(HuffmanTree*HTree);
+        -:   14:void CompressFileGen(CompressInfo*CInfo,HuffmanTree*HTree,char*originPath,char*targetPath);
+        -:   15:void HuffmanCode(HuffmanNode*node,int num,int branch,char* preChar,CompressInfo*CInfo);
+        -:   16:CompressInfo *HeadInfoRead(FILE*fp);
+        -:   17:void HeadInfoWrite(FILE*fp,CompressInfo*Info);
+        -:   18:void WriteString(FILE*fp,char*string);
+        -:   19:char*GetEle(char *input,int mode,CompressInfo*CInfo);
+        -:   20:char*ReadString(FILE*fp,double basicUnitSize,int file_size);
+        -:   21:char*GenCompressString(FILE*fp,double basicUnitSize,char*preString,CompressInfo*CInfo);
+        -:   22:int FindInMap(char*string,CompressInfo*CInfo);
+        -:   23:void DeCompress(char*originPath,char*targetPath);
+        -:   24:HuffmanNode *HuffSearch(HuffmanNode *HF,CompressInfo*CInfo,char*preString);
+function MapConstruct called 1 returned 100% blocks executed 93%
+        1:   25:CompressInfo *MapConstruct(double basicUnitSize,int BranchSize,char*originPath){
+        -:   26:    FILE *fp;
+        -:   27:    char *p;
+        1:   28:    int EXTERN=0;
+        1:   29:    printf("Map constructing 1\n");
+        1:   29-block  0
+call    0 returned 1
+        1:   30:    fp= fopen(originPath,"rb+");//打开目标文件
+call    0 returned 1
+        1:   31:    printf("origin--%x",fp);
+call    0 returned 1
+        1:   32:    if(fp==NULL){
+branch  0 taken 0 (fallthrough)
+branch  1 taken 1
+    #####:   33:        printf("fail to open\n");
+    %%%%%:   33-block  0
+call    0 never executed
+    #####:   34:        exit(0);
+call    0 never executed
+        -:   35:    }
+        -:   36:    CompressNode *head;
+        1:   37:    CompressInfo *CInfo=(CompressInfo*) malloc(sizeof (CompressInfo));
+       1*:   38:    CInfo->bit=(log2(BranchSize)-(int)log2(BranchSize)==0)?log2(BranchSize): log2(BranchSize)+1;
+        1:   38-block  0
+branch  0 taken 1 (fallthrough)
+branch  1 taken 0
+        1:   38-block  1
+    %%%%%:   38-block  2
+        1:   39:    CInfo->FileSize= file_size(originPath);
+        1:   39-block  0
+call    0 returned 1
+        1:   40:    CInfo->BasicUnitSize=basicUnitSize;
+        1:   41:    CInfo->HuffBranch=BranchSize;
+        1:   42:    CInfo->TotalCharNum=0;
+        1:   43:    CInfo->UnitNum=0;
+        1:   44:    CInfo->completeSize=0;
+        1:   45:    CInfo->Extension=(char*) malloc(sizeof (char)*20);
+        1:   46:    CInfo->name=(char *) malloc(sizeof (char )*80);
+        1:   47:    CInfo->UnitSet=(CompressNode*) malloc(sizeof (CompressNode)*INIT_MAX_SIZE);
+        -:   48:    //记录后缀名及文件名
+        -:   49:    int i,j,z;
+        1:   50:    i= strlen(originPath);//从文件最末往前遍历直至'.'，目的是截取后缀名
+        5:   51:    for(j=i-1;originPath[j]!='.';--j){}
+        4:   51-block  0
+        5:   51-block  1
+branch  0 taken 4
+branch  1 taken 1 (fallthrough)
+        1:   52:    CInfo->Extension=StringCombina(&originPath[j],NULL);//截取文件名
+        1:   52-block  0
+call    0 returned 1
+       24:   53:    for(z=j;z>=0&&originPath[z]!='\\';--z){}
+       23:   53-block  0
+       24:   53-block  1
+branch  0 taken 23 (fallthrough)
+branch  1 taken 1
+       23:   53-block  2
+branch  2 taken 23
+branch  3 taken 0 (fallthrough)
+        1:   54:    ++z;
+        1:   55:    CInfo->name=StringCombina(&originPath[z],NULL);
+        1:   55-block  0
+call    0 returned 1
+        1:   56:    CInfo->name=StringCut(CInfo->name,j-1-z);
+call    0 returned 1
+        -:   57:    //if(basicUnitSize-(double)((int)basicUnitSize)!=0)
+        1:   58:    FILE *fp0=fopen(originPath,"rb+");
+call    0 returned 1
+        1:   59:    printf("1--%x\n",fp0);
+call    0 returned 1
+        1:   60:    printf("2--%x\n",fp);
+call    0 returned 1
+        -:   61:    char *temp;
+        -:   62:    char *temp1;
+        -:   63:    int presize;
+        1:   64:    printf("Map constructing2\n"); //构建字符记录表
+call    0 returned 1
+        1:   65:    i=0;
+    20657:   66:    while(ftell(fp) < CInfo->FileSize){//未到文件末时
+    20657:   66-block  0
+call    0 returned 20657
+branch  1 taken 20656
+branch  2 taken 1 (fallthrough)
+    20656:   67:        temp= ReadString(fp,basicUnitSize,CInfo->FileSize);//读字符串，长度为BasicNum*2字节，保证整字节
+    20656:   67-block  0
+call    0 returned 20656
+    20656:   68:        if(ftell(fp) < CInfo->FileSize) {//未到文件末，证明读到的不是尾串
+call    0 returned 20656
+branch  1 taken 20655 (fallthrough)
+branch  2 taken 1
+        -:   69:            char*new;
+    20655:   70:            new = BiChConverse(temp, 1, (int) (basicUnitSize * 2));//basicUnitSize*2*8
+    20655:   70-block  0
+call    0 returned 20655
+    20655:   71:            temp=new;
+        -:   72:        }else{//已到文件末，证明读到的是尾串，需要特殊处理
+        1:   73:            temp = BiChConverse(temp, 1, temp[(int)(basicUnitSize*2)]);
+        1:   73-block  0
+call    0 returned 1
+        -:   74:        }
+    20656:   75:        if(ftell(fp) != CInfo->FileSize){//对于非文末串
+    20656:   75-block  0
+call    0 returned 20656
+branch  1 taken 20655 (fallthrough)
+branch  2 taken 1
+    20655:   76:            temp1= StringCut(temp,(int)(basicUnitSize*8-1));//将两个基本单元二进制字符串中间切半
+    20655:   76-block  0
+call    0 returned 20655
+    20655:   77:            CompressUnitInsert(temp1,CInfo);//记入记录表
+call    0 returned 20655
+    20655:   78:            ++CInfo->TotalCharNum;//总单元数++
+    20655:   79:            CompressUnitInsert(temp,CInfo);//记入记录表
+call    0 returned 20655
+    20655:   80:            ++CInfo->TotalCharNum;
+        -:   81://            free(temp);//释放单元
+        -:   82://            free(temp1);//
+        -:   83:        }else{
+        1:   84:            CInfo->UnitSet[CInfo->UnitNum].unit=StringCombina(temp,NULL);
+        1:   84-block  0
+call    0 returned 1
+        1:   85:            CInfo->UnitSet[CInfo->UnitNum].appearNum=1;
+        1:   86:            ++CInfo->UnitNum;
+        1:   87:            ++CInfo->TotalCharNum;
+        -:   88://            free(temp);
+        -:   89:        }
+    20656:   90:        EXTERN+=1;
+    20656:   90-block  0
+        -:   91:    }
+        1:   92:    printf("Map construct done! with size %d\n",EXTERN);
+        1:   92-block  0
+call    0 returned 1
+        1:   93:    fclose(fp);
+call    0 returned 1
+        1:   94:    return CInfo;
+        -:   95:}
+        -:   96:
+function CompressUnitInsert called 41310 returned 100% blocks executed 87%
+    41310:   97:void CompressUnitInsert(char *InsertUnit,CompressInfo*CInfo){//将基本符号单元插入
+    41310:   98:    int i=0;
+    41310:   99:    if(CInfo->UnitNum==INIT_MAX_SIZE-1000){
+    41310:   99-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 41310
+    #####:  100:        CInfo->UnitSet= realloc(CInfo->UnitSet,((int)INIT_MAX_SIZE/2+CInfo->UnitNum)*sizeof (CompressNode));
+    %%%%%:  100-block  0
+        -:  101:    }
+    41310:  102:    if(!InsertUnit){
+    41310:  102-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 41310
+    #####:  103:        return;
+    %%%%%:  103-block  0
+        -:  104:    }
+    41310:  105:    if(CInfo->TotalCharNum==0){//表中无单元
+    41310:  105-block  0
+branch  0 taken 1 (fallthrough)
+branch  1 taken 41309
+        -:  106://        CInfo->UnitSet= (CompressNode *)malloc(sizeof (CompressNode));
+        1:  107:        CInfo->UnitSet[0].unit=StringCombina(InsertUnit,NULL);
+        1:  107-block  0
+call    0 returned 1
+        1:  108:        CInfo->UnitSet->appearNum=1;
+        1:  109:        ++CInfo->UnitNum;
+        1:  110:        return;
+        -:  111:    }
+        -:  112:    else{//单元集中已存在
+    41309:  113:        CompressNode *node=CInfo->UnitSet;
+  2465918:  114:        for(i=0;i<CInfo->UnitNum;++i){
+    41309:  114-block  0
+  2465918:  114-block  1
+branch  0 taken 2465663
+branch  1 taken 255 (fallthrough)
+  2465663:  115:            if(strcmp(node->unit,InsertUnit)==0){//若在字库中匹配到
+  2465663:  115-block  0
+branch  0 taken 41054 (fallthrough)
+branch  1 taken 2424609
+    41054:  116:                ++node->appearNum;//该单元+1
+        -:  117://                    if(strcmp(node->unit,"01100010")==0){
+        -:  118://
+        -:  119://                    }
+    41054:  120:                return;
+    41054:  120-block  0
+        -:  121:            }
+  2424609:  122:            ++node;
+  2424609:  122-block  0
+        -:  123:        }//不存在
+        -:  124://        CInfo->UnitSet=realloc(CInfo->UnitSet,(CInfo->UnitNum+3)*sizeof (CompressNode));
+        -:  125://            if(!CInfo->UnitSet){
+        -:  126://                exit(0);
+        -:  127://            }
+        -:  128:
+      255:  129:        CInfo->UnitSet[CInfo->UnitNum].unit=StringCombina(InsertUnit,NULL);
+      255:  129-block  0
+call    0 returned 255
+      255:  130:        CInfo->UnitSet[CInfo->UnitNum].appearNum=1;
+      255:  131:        ++CInfo->UnitNum;
+      255:  132:        return;
+        -:  133:    }
+        -:  134:}
+function ReadString called 44116 returned 100% blocks executed 93%
+    44116:  135:char* ReadString(FILE*fp,double basicUnitSize,int file_size){//读取basic*2单元
+        -:  136:    char c;
+    44116:  137:    int i=0;
+    44116:  138:    char *chSet=(char*) malloc((int)(basicUnitSize*2+10)*sizeof(char));//尾部+'\0'
+    44116:  139:    *chSet='\0';
+    44116:  140:    int previousNum=0;
+   126738:  141:    while((ftell(fp) < file_size)&&previousNum<(int)(basicUnitSize*2)){
+    44116:  141-block  0
+   126738:  141-block  1
+call    0 returned 126738
+branch  1 taken 123932 (fallthrough)
+branch  2 taken 2806
+   123932:  141-block  2
+branch  3 taken 82622
+branch  4 taken 41310 (fallthrough)
+    82622:  142:        chSet[previousNum]=c;
+    82622:  143:        c=fgetc(fp);
+    82622:  143-block  0
+call    0 returned 82622
+        -:  144:        if((c&0x00)==c){
+        -:  145:
+        -:  146:        }
+    82622:  147:        previousNum++;
+    82622:  147-block  0
+        -:  148:    }//取满单元
+    44116:  149:    if((ftell(fp) < file_size)){//非文件尾，加\0
+    44116:  149-block  0
+call    0 returned 44116
+branch  1 taken 41310 (fallthrough)
+branch  2 taken 2806
+    41310:  150:        chSet[previousNum]='\0';
+    41310:  151:        return chSet;
+    41310:  151-block  0
+        -:  152:    }else{//否
+     2806:  153:        chSet[previousNum]='\0';
+     2806:  154:        chSet= realloc(chSet,(int)(basicUnitSize*2+40)*sizeof(char));
+     2806:  155:        if(!chSet){
+     2806:  155-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 2806
+    #####:  156:            exit(11451415);
+    %%%%%:  156-block  0
+call    0 never executed
+        -:  157:        }
+     2806:  158:        chSet[(int)(basicUnitSize*2)]=previousNum;//最后一个字符的下标+1
+     2806:  159:        return chSet;
+     2806:  159-block  0
+        -:  160:    }
+        -:  161:}
+        -:  162:
+function HuffmanTreeConstruct called 1 returned 100% blocks executed 87%
+        1:  163:HuffmanTree *HuffmanTreeConstruct(CompressInfo*CInfo){
+        1:  164:    int nodeData[CInfo->UnitNum][2];//存放单元数据
+        -:  165:    HuffmanNode *node;
+        1:  166:    int i=0;
+        1:  167:    printf("Tree constructing\n");
+        1:  167-block  0
+call    0 returned 1
+        -:  168:
+        -:  169:    DynamicArray *Darray;//动态指针数组，存放结点指针
+        1:  170:    Darray= Init(CInfo->UnitNum*10000);
+call    0 returned 1
+        -:  171:
+      258:  172:    for(i=0;i<CInfo->UnitNum;++i){
+      258:  172-block  0
+branch  0 taken 257
+branch  1 taken 1 (fallthrough)
+      257:  173:        nodeData[i][0]=i;//编号
+      257:  174:        nodeData[i][1]=CInfo->UnitSet[i].appearNum;//权值
+      257:  175:        node=(HuffmanNode*) malloc(sizeof (HuffmanNode));
+      257:  176:        node->num=i;
+      257:  177:        node->value=CInfo->UnitSet[i].appearNum;
+      257:  178:        node->code=Node_SINGAL;
+      257:  179:        AssertArray(Darray,i,node);//Darray存放HuffmanTree临时结点
+      257:  179-block  0
+call    0 returned 257
+        -:  180:    }
+        -:  181:
+        1:  182:    HuffmanTree *head=(HuffmanTree*) malloc(sizeof (HuffmanTree));
+        1:  183:    head->branch=CInfo->HuffBranch;
+        1:  184:    head->Head=(HuffmanNode*) malloc(sizeof (HuffmanNode));
+        -:  185:
+        1:  186:    int exten=0;
+        1:  187:    int out_flag=0;
+      257:  188:    while(!out_flag){
+        1:  188-block  0
+      257:  188-block  1
+branch  0 taken 257
+branch  1 taken 0 (fallthrough)
+        -:  189:
+        -:  190:
+      257:  191:        int j=0;
+      257:  192:        int flag=0;
+        -:  193:        int temp;
+        -:  194:        int start;
+      257:  195:        ++exten;
+        -:  196:
+    66306:  197:        for(i=0;i<CInfo->UnitNum;++i){//将所有结点按权值从小到大排序
+      257:  197-block  0
+    66049:  197-block  1
+    66306:  197-block  2
+branch  0 taken 66049
+branch  1 taken 257 (fallthrough)
+    66049:  198:            temp=0;
+  8586370:  199:            for(flag=j=i;j<CInfo->UnitNum;++j){
+    66049:  199-block  0
+  8520321:  199-block  1
+  8586370:  199-block  2
+branch  0 taken 8520321
+branch  1 taken 66049 (fallthrough)
+  8520321:  200:                if(nodeData[flag][1]>nodeData[j][1]){
+  8520321:  200-block  0
+branch  0 taken 31175 (fallthrough)
+branch  1 taken 8489146
+    31175:  201:                    flag=j;
+    31175:  201-block  0
+        -:  202:                }
+        -:  203:            }
+    66049:  204:            if(flag!=i){
+    66049:  204-block  0
+branch  0 taken 30596 (fallthrough)
+branch  1 taken 35453
+    30596:  205:                temp=nodeData[flag][1];
+    30596:  206:                nodeData[flag][1]=nodeData[i][1];
+    30596:  207:                nodeData[i][1]=temp;
+    30596:  208:                temp=nodeData[flag][0];
+    30596:  208-block  0
+        -:  209:                if(temp==258){
+        -:  210:
+        -:  211:                }
+    30596:  212:                nodeData[flag][0]=nodeData[i][0];
+    30596:  213:                nodeData[i][0]=temp;
+    30596:  213-block  0
+        -:  214:            }
+        -:  215:        }
+        -:  216:
+        -:  217:
+      257:  218:        node=(HuffmanNode*) malloc(sizeof (HuffmanNode));//新开结点
+      257:  219:        node->value=0;
+      257:  220:        node->num=0;
+      257:  221:        node->code=0;
+      257:  222:        node->Child=(HuffmanNode*) malloc(sizeof (HuffmanNode)*(CInfo->HuffBranch+10));
+      257:  223:        if(node->Child==NULL){
+      257:  223-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 257
+    #####:  224:            exit(11);
+    %%%%%:  224-block  0
+call    0 never executed
+        -:  225:        }
+        -:  226:        HuffmanNode *node1;
+      257:  227:        node1=node->Child;
+    33153:  228:        for(i=0;nodeData[i][1]==0&&i<CInfo->UnitNum;++i){}//找到最小的非0单元位置
+      257:  228-block  0
+    32896:  228-block  1
+    33153:  228-block  2
+branch  0 taken 32896 (fallthrough)
+branch  1 taken 257
+    32896:  228-block  3
+branch  2 taken 32896
+branch  3 taken 0 (fallthrough)
+      257:  229:        if(i==CInfo->UnitNum-1){
+      257:  229-block  0
+branch  0 taken 1 (fallthrough)
+branch  1 taken 256
+        1:  230:            head->Head= ReadArray(Darray,nodeData[i][0]);
+        1:  230-block  0
+call    0 returned 1
+        1:  231:            printf("Tree constructing done!\n");
+call    0 returned 1
+        1:  232:            return head;
+        -:  233:        }
+      256:  234:        if(CInfo->UnitNum-i<CInfo->HuffBranch){//若所有非0单元不足n个，往回取0单元不足
+      256:  234-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 256
+    #####:  235:            j=i-(CInfo->HuffBranch-CInfo->UnitNum+i);//TODO 原单元集比叉数少时会错误
+    #####:  236:            out_flag=1;
+    %%%%%:  236-block  0
+        -:  237:        }else{
+      256:  238:            j=i;
+      256:  238-block  0
+        -:  239:        }
+        -:  240:
+        -:  241:        //node1为第一个child
+      768:  242:        for(start=j+CInfo->HuffBranch-1;start>=j;--start){
+      256:  242-block  0
+      768:  242-block  1
+branch  0 taken 512
+branch  1 taken 256 (fallthrough)
+      512:  243:            node->value+=nodeData[start][1];//把各点权值加到新结点
+      512:  244:            if(nodeData[start][1]!=0) {//将选中单元作为新节点孩子
+      512:  244-block  0
+branch  0 taken 512 (fallthrough)
+branch  1 taken 0
+      512:  245:                node1=ReadArray(Darray,nodeData[start][0]);
+      512:  245-block  0
+call    0 returned 512
+        -:  246://                DelectArray(Darray, nodeData[start][0]);
+        -:  247://                node->Child[start-j].value=node1->value;
+        -:  248://                node->Child[start-j].num=node1->value;
+        -:  249://                node->Child[start-j].code=1;
+      512:  250:                node->Child[CInfo->HuffBranch-1-start+j]=*node1;
+        -:  251:            } else{
+    #####:  252:                node1= NULL;
+    #####:  253:                node->Child[CInfo->HuffBranch-1-start+j].num=0;
+    #####:  254:                node->Child[CInfo->HuffBranch-1-start+j].value=0;
+    #####:  255:                node->Child[CInfo->HuffBranch-1-start+j].code=0;
+    %%%%%:  255-block  0
+        -:  256:            }
+      512:  257:            nodeData[start][0]=0;//信息置0
+      512:  258:            nodeData[start][1]=0;
+      512:  258-block  0
+        -:  259:        }
+        -:  260:        //新节点信息
+      256:  261:        nodeData[j][0]=CInfo->UnitNum+exten;
+      256:  262:        nodeData[j][1]=node->value;
+      256:  263:        node->num=CInfo->UnitNum+exten;//编号
+      256:  264:        AssertArray(Darray,CInfo->UnitNum+exten,node);
+      256:  264-block  0
+call    0 returned 256
+        -:  265:    }
+        -:  266:
+    #####:  267:    head->Head= ReadArray(Darray,CInfo->UnitNum+exten);
+    %%%%%:  267-block  0
+call    0 never executed
+    #####:  268:    printf("Tree constructing done!\n");
+call    0 never executed
+    #####:  269:    return head;
+        -:  270:}
+        -:  271:
+        -:  272:
+function HuffCodePrint called 1 returned 100% blocks executed 100%
+        1:  273:void HuffCodePrint(HuffmanNode*node,CompressInfo*CInfo,int layer){
+        1:  274:    int nodeData[CInfo->UnitNum][2];//存放单元数据
+        1:  275:    int i=0;
+      258:  276:    for(i=0;i<CInfo->UnitNum;++i){
+        1:  276-block  0
+      258:  276-block  1
+branch  0 taken 257
+branch  1 taken 1 (fallthrough)
+      257:  277:        nodeData[i][0]=i;//编号
+      257:  278:        nodeData[i][1]=CInfo->UnitSet[i].appearNum;//权值
+      257:  278-block  0
+        -:  279:    }
+        1:  280:    int j=0;
+        1:  281:    int flag=0;
+        -:  282:    int temp;
+        -:  283:    int start;
+      258:  284:    for(i=0;i<CInfo->UnitNum;++i){//将所有结点按权值从小到大排序
+        1:  284-block  0
+      257:  284-block  1
+      258:  284-block  2
+branch  0 taken 257
+branch  1 taken 1 (fallthrough)
+      257:  285:        temp=0;
+    33410:  286:        for(flag=j=i;j<CInfo->UnitNum;++j){
+      257:  286-block  0
+    33153:  286-block  1
+    33410:  286-block  2
+branch  0 taken 33153
+branch  1 taken 257 (fallthrough)
+    33153:  287:            if(nodeData[flag][1]>nodeData[j][1]){
+    33153:  287-block  0
+branch  0 taken 832 (fallthrough)
+branch  1 taken 32321
+      832:  288:                flag=j;
+      832:  288-block  0
+        -:  289:            }
+        -:  290:        }
+      257:  291:        if(flag!=i){
+      257:  291-block  0
+branch  0 taken 253 (fallthrough)
+branch  1 taken 4
+      253:  292:            temp=nodeData[flag][1];
+      253:  293:            nodeData[flag][1]=nodeData[i][1];
+      253:  294:            nodeData[i][1]=temp;
+      253:  295:            temp=nodeData[flag][0];
+      253:  295-block  0
+        -:  296:            if(temp==258){
+        -:  297:
+        -:  298:            }
+      253:  299:            nodeData[flag][0]=nodeData[i][0];
+      253:  300:            nodeData[i][0]=temp;
+      253:  300-block  0
+        -:  301:        }
+        -:  302:    }
+        1:  303:    int size=0;
+        1:  304:    int val=0;
+        1:  305:    int sum=0;
+        1:  306:    printf("Huffcode\n");
+        1:  306-block  0
+call    0 returned 1
+      258:  307:    for(i=0;i<CInfo->UnitNum;++i){
+      258:  307-block  0
+branch  0 taken 257
+branch  1 taken 1 (fallthrough)
+      257:  308:        size= strlen(CInfo->UnitSet[nodeData[i][0]].HuffCode);
+      257:  309:        val= CInfo->UnitSet[nodeData[i][0]].appearNum;
+      257:  310:        sum+=size*val;
+      257:  311:        printf("Char %s Num:%d value:%d HuffCode:%s\n",BiChConverse(CInfo->UnitSet[i].unit,0,0),nodeData[i][0],CInfo->UnitSet[nodeData[i][0]].appearNum,CInfo->UnitSet[nodeData[i][0]].HuffCode);
+      257:  311-block  0
+call    0 returned 257
+call    1 returned 257
+        -:  312:    }
+        1:  313:    printf("Origin size of the file is %d kb\n",((int)(CInfo->TotalCharNum*CInfo->BasicUnitSize))/1024);
+        1:  313-block  0
+call    0 returned 1
+        1:  314:    printf("Estimated size of Compressed file is %d kb\n",sum/(8*1024));
+call    0 returned 1
+        1:  315:}
+function HuffmanCode called 256 returned 100% blocks executed 92%
+      256:  316:void HuffmanCode(HuffmanNode*node,int num,int branch,char *preChar,CompressInfo *CInfo){
+      256:  317:    int i=0;
+        -:  318:    char *a;
+        -:  319:    char*b;
+      768:  320:    for(i=0;i<branch;++i){
+      256:  320-block  0
+      512:  320-block  1
+      768:  320-block  2
+branch  0 taken 512
+branch  1 taken 256 (fallthrough)
+      512:  321:        char *a=(char*) malloc(sizeof (char)*2);
+      512:  322:        a[1]='\0';
+      512:  323:        a[0]=i+48;//该分支编号
+        -:  324:        char *next;
+      512:  325:        if(*preChar=='\0'){//输入时直接加入分支
+      512:  325-block  0
+branch  0 taken 2 (fallthrough)
+branch  1 taken 510
+        2:  326:            next=a;
+        2:  326-block  0
+        -:  327:        }else{//否则合并之前的串
+      510:  328:            next=StringCombina(preChar,a);
+      510:  328-block  0
+call    0 returned 510
+        -:  329:        }
+      512:  330:        if((node->Child[i].num)==(node->Child[i].code)){//该分支非结点
+      512:  330-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 512
+    #####:  331:            continue;
+    %%%%%:  331-block  0
+        -:  332:        }
+        -:  333:        else{//否则叶子/非叶子
+      512:  334:            if((node->Child[i].code)!=Node_SINGAL){
+      512:  334-block  0
+branch  0 taken 255 (fallthrough)
+branch  1 taken 257
+      255:  335:                HuffmanCode(&node->Child[i],num,branch,next,CInfo);
+      255:  335-block  0
+call    0 returned 255
+        -:  336:            } else{
+      257:  337:                CInfo->UnitSet[node->Child[i].num].HuffCode= DemicalToBinary(next,CInfo->HuffBranch);
+      257:  337-block  0
+call    0 returned 257
+        -:  338:            }
+        -:  339:        }
+        -:  340:    }
+      256:  341:}
+        -:  342:
+function MapPrint called 1 returned 100% blocks executed 100%
+        1:  343:void MapPrint(CompressInfo*CInfo){
+        1:  344:    printf("total char num:%d\n",CInfo->TotalCharNum);
+        1:  344-block  0
+call    0 returned 1
+        1:  345:    printf("total unitset num:%d\n",CInfo->UnitNum);
+call    0 returned 1
+        1:  346:    printf("file name %s\n",CInfo->name);
+call    0 returned 1
+        1:  347:    printf("file extension %s\n",CInfo->Extension);
+call    0 returned 1
+        1:  348:}
+function FindInMap called 41310 returned 100% blocks executed 78%
+    41310:  349:int FindInMap(char*string,CompressInfo*CInfo){
+    41310:  350:    int i=0;
+    41310:  351:    if(strlen(string)!=CInfo->BasicUnitSize*8){
+    41310:  351-block  0
+branch  0 taken 0 (fallthrough)
+branch  1 taken 41310
+    #####:  352:        i=CInfo->UnitNum-1;
+    %%%%%:  352-block  0
+        -:  353:    }
+  2466104:  354:    for(;i<CInfo->UnitNum;++i){
+    41310:  354-block  0
+  2424794:  354-block  1
+  2466104:  354-block  2
+branch  0 taken 2466104
+branch  1 taken 0 (fallthrough)
+  2466104:  355:        if(strcmp(string,CInfo->UnitSet[i].unit)==0){
+  2466104:  355-block  0
+branch  0 taken 41310 (fallthrough)
+branch  1 taken 2424794
+    41310:  356:            return i;
+    41310:  356-block  0
+        -:  357:        }
+        -:  358:    }
+    #####:  359:    exit(11451415);
+    %%%%%:  359-block  0
+call    0 never executed
+        -:  360:}
+function CompressFileGen called 1 returned 100% blocks executed 100%
+        1:  361:void CompressFileGen(CompressInfo*CInfo,HuffmanTree*HTree,char*originPath,char*targetPath){
+        -:  362:    FILE *fpout,*fin;
+        1:  363:    fpout= fopen(targetPath,"wb+");
+        1:  363-block  0
+call    0 returned 1
+        1:  364:    HeadInfoWrite(fpout,CInfo);
+call    0 returned 1
+        1:  365:    fin= fopen(originPath,"rb+");
+call    0 returned 1
+        1:  366:    char*preViousString="\0";
+        -:  367:    char*writeS;
+        1:  368:    int n=0;
+    23461:  369:    while((ftell(fpout) < CInfo->FileSize)){
+    23461:  369-block  0
+call    0 returned 23461
+branch  1 taken 23460
+branch  2 taken 1 (fallthrough)
+    23460:  370:        preViousString= GenCompressString(fin,CInfo->BasicUnitSize,preViousString,CInfo);
+    23460:  370-block  0
+call    0 returned 23460
+    23460:  371:        int a=ftell(fpout);
+call    0 returned 23460
+    23460:  372:        n=((int)strlen(preViousString))/8;//当binary单元数为大于等于双整字节时
+    23460:  373:        if(n>=1){
+branch  0 taken 22433 (fallthrough)
+branch  1 taken 1027
+    22433:  374:            writeS=StringCut(preViousString,n*(8)-1);
+    22433:  374-block  0
+call    0 returned 22433
+    22433:  375:            writeS=BiChConverse(writeS,0,0);
+call    0 returned 22433
+    22433:  376:            fwrite(writeS, strlen(writeS),1,fpout);
+call    0 returned 22433
+    22433:  377:            free(writeS);
+        -:  378:        }
+        -:  379:    }
+        1:  380:    if(strlen(preViousString)<8){
+        1:  380-block  0
+branch  0 taken 1 (fallthrough)
+branch  1 taken 0
+        1:  381:        int delta=8-strlen(preViousString);
+        1:  382:        int i=0;
+        1:  383:        char*complete=(char*) malloc(sizeof (char)*(delta+1));
+        9:  384:        for(i=0;i<delta;++i){
+        1:  384-block  0
+        9:  384-block  1
+branch  0 taken 8
+branch  1 taken 1 (fallthrough)
+        8:  385:            complete[i]='0';
+        8:  385-block  0
+        -:  386:        }
+        1:  387:        complete[i]='\0';
+        1:  388:        preViousString=StringCombina(preViousString,complete);
+        1:  388-block  0
+call    0 returned 1
+        1:  389:        CInfo->completeSize=delta;
+        -:  390:    }
+        1:  391:    writeS=BiChConverse(preViousString,0,0);
+        1:  391-block  0
+call    0 returned 1
+        1:  392:    fwrite(writeS, strlen(writeS),1,fpout);
+call    0 returned 1
+        1:  393:    free(writeS);
+        1:  394:    fclose(fpout);
+call    0 returned 1
+        1:  395:    fclose(fin);
+call    0 returned 1
+        1:  396:    printf("file gen done!\n");
+call    0 returned 1
+        1:  397:};
+function HeadInfoRead called 0 returned 0% blocks executed 0%
+    #####:  398:CompressInfo *HeadInfoRead(FILE*fp){
+    #####:  399:    CompressInfo *Info=(CompressInfo*) malloc(sizeof (CompressInfo));
+    #####:  400:    int num=0;
+    #####:  401:    fread(Info,sizeof (CompressInfo),1,fp);
+    %%%%%:  401-block  0
+call    0 never executed
+        -:  402:
+    #####:  403:    fread(&num,sizeof (int),1,fp);
+call    0 never executed
+    #####:  404:    fread(Info->name,strlen(Info->name)+1,1,fp);
+call    0 never executed
+        -:  405:
+    #####:  406:    fread(&num,sizeof (int),1,fp);
+call    0 never executed
+    #####:  407:    fread(Info->Extension,strlen(Info->Extension)+1,1,fp);
+call    0 never executed
+        -:  408:
+    #####:  409:    fread(Info->UnitSet,sizeof (CompressNode)*(Info->UnitNum),1,fp);
+call    0 never executed
+    #####:  410:    int i=0;
+    #####:  411:    for(i=0;i<Info->UnitNum;++i){
+    %%%%%:  411-block  0
+branch  0 never executed
+branch  1 never executed
+    #####:  412:        fread(&num,sizeof (int),1,fp);
+    %%%%%:  412-block  0
+call    0 never executed
+    #####:  413:        fwrite(Info->UnitSet[i].unit, num,1,fp);
+call    0 never executed
+        -:  414:
+    #####:  415:        fread(&num,sizeof (int),1,fp);
+call    0 never executed
+    #####:  416:        fwrite(Info->UnitSet[i].HuffCode, num,1,fp);
+call    0 never executed
+        -:  417:    }
+    #####:  418:    return Info;
+    %%%%%:  418-block  0
+        -:  419:}
+        -:  420:#endif //HF_COMPRESS_H
