@@ -27,9 +27,8 @@ CompressInfo *MapConstruct(double basicUnitSize,int BranchSize,char*originPath){
     FILE *fp;
     char *p;
     int EXTERN=0;
-    printf("Map constructing 1\n");
+    printf("Map constructing\n");
     fp= fopen(originPath,"rb+");//打开目标文件
-    printf("origin--%x",fp);
     if(fp==NULL){
         printf("fail to open\n");
         exit(0);
@@ -54,19 +53,18 @@ CompressInfo *MapConstruct(double basicUnitSize,int BranchSize,char*originPath){
     ++z;
     CInfo->name=StringCombina(&originPath[z],NULL);
     CInfo->name=StringCut(CInfo->name,j-1-z);
-    //if(basicUnitSize-(double)((int)basicUnitSize)!=0)
     FILE *fp0=fopen(originPath,"rb+");
-    printf("1--%x\n",fp0);
-    printf("2--%x\n",fp);
     char *temp;
     char *temp1;
-    printf("Map constructing2\n"); //构建字符记录表
+    char*new;
+    printf("Map constructing process:\n"); //构建字符记录表
     i=0;
     while(ftell(fp) < CInfo->FileSize){//未到文件末时
         temp= ReadString(fp,basicUnitSize,CInfo->FileSize);//读字符串，长度为BasicNum*2字节，保证整字节
         if(ftell(fp) < CInfo->FileSize) {//未到文件末，证明读到的不是尾串
-            char*new;
             new = BiChConverse(temp, 1, (int) (basicUnitSize * 2));//basicUnitSize*2*8
+            free(temp);
+            temp=NULL;
             temp=new;
         }else{//已到文件末，证明读到的是尾串，需要特殊处理
             temp = BiChConverse(temp, 1, temp[(int)(basicUnitSize*2)]);
@@ -77,24 +75,27 @@ CompressInfo *MapConstruct(double basicUnitSize,int BranchSize,char*originPath){
             ++CInfo->TotalCharNum;//总单元数++
             CompressUnitInsert(temp,CInfo);//记入记录表
             ++CInfo->TotalCharNum;
-//            free(temp);//释放单元
-//            free(temp1);//
+            free(temp);//释放单元
+            free(temp1);
         }else{
             CInfo->UnitSet[CInfo->UnitNum].unit=StringCombina(temp,NULL);
             CInfo->UnitSet[CInfo->UnitNum].appearNum=1;
+            CInfo->UnitSet[CInfo->UnitNum].flag=BinaryToDemical(CInfo->UnitSet[CInfo->UnitNum].unit);
             ++CInfo->UnitNum;
             ++CInfo->TotalCharNum;
 //            free(temp);
         }
         EXTERN+=1;
+//        printf("process:%d\n",EXTERN);
     }
-    printf("Map construct done! with size %d\n",EXTERN);
+    printf("Map construct done! Origin size is %dkb\n",EXTERN*basicUnitSize*2/1024);
     fclose(fp);
     return CInfo;
 }
 
 void CompressUnitInsert(char *InsertUnit,CompressInfo*CInfo){//将基本符号单元插入
     int i=0;
+    unsigned Bi= BinaryToDemical(InsertUnit);
     if(CInfo->UnitNum==INIT_MAX_SIZE-1000){
         CInfo->UnitSet= realloc(CInfo->UnitSet,((int)INIT_MAX_SIZE/2+CInfo->UnitNum)*sizeof (CompressNode));
     }
@@ -105,17 +106,15 @@ void CompressUnitInsert(char *InsertUnit,CompressInfo*CInfo){//将基本符号�
 //        CInfo->UnitSet= (CompressNode *)malloc(sizeof (CompressNode));
         CInfo->UnitSet[0].unit=StringCombina(InsertUnit,NULL);
         CInfo->UnitSet->appearNum=1;
+        CInfo->UnitSet[0].flag=BinaryToDemical(CInfo->UnitSet[0].unit);
         ++CInfo->UnitNum;
         return;
     }
     else{//单元集中已存在
         CompressNode *node=CInfo->UnitSet;
         for(i=0;i<CInfo->UnitNum;++i){
-            if(strcmp(node->unit,InsertUnit)==0){//若在字库中匹配到
+            if(Bi==node->flag){//若在字库中匹配到
                 ++node->appearNum;//该单元+1
-//                    if(strcmp(node->unit,"01100010")==0){
-//
-//                    }
                 return;
             }
             ++node;
@@ -124,8 +123,8 @@ void CompressUnitInsert(char *InsertUnit,CompressInfo*CInfo){//将基本符号�
 //            if(!CInfo->UnitSet){
 //                exit(0);
 //            }
-
         CInfo->UnitSet[CInfo->UnitNum].unit=StringCombina(InsertUnit,NULL);
+        CInfo->UnitSet[CInfo->UnitNum].flag=BinaryToDemical(CInfo->UnitSet[CInfo->UnitNum].unit);
         CInfo->UnitSet[CInfo->UnitNum].appearNum=1;
         ++CInfo->UnitNum;
         return;
@@ -135,7 +134,7 @@ char* ReadString(FILE*fp,double basicUnitSize,int file_size){//读取basic*2单�
     char c;
     char checker[2];
     checker[1]='\0';
-    char *chSet=(char*) malloc((int)(basicUnitSize*2+10)*sizeof(char));//尾部+'\0'
+    char *chSet=(char*) malloc((int)(basicUnitSize*2+1)*sizeof(char));//尾部+'\0'
     *chSet='\0';
     char*temp111;
     int previousNum=0;
@@ -332,6 +331,7 @@ void HuffmanCode(HuffmanNode*node,int num,int branch,char *preChar,CompressInfo 
                 HuffmanCode(&node->Child[i],num,branch,next,CInfo);
             } else{
                 CInfo->UnitSet[node->Child[i].num].HuffCode= DemicalToBinary(next,CInfo->HuffBranch);
+                printf("get node!\n");
             }
         }
     }
@@ -360,21 +360,28 @@ void CompressFileGen(CompressInfo*CInfo,HuffmanTree*HTree,char*originPath,char*t
     int charwritten=0;
     int n=0;
     char*preViousString="\0";
-    char*writeS;
+    char*writeS=NULL;
+    char*temp1;
+    char*temp2;
+    char*temp3;
+    int writtenchar=0;
 
     fpout= fopen(targetPath,"wb+");//写入文件头
     HeadInfoWrite(fpout,CInfo);
 
     fin= fopen(originPath,"rb+");
+    printf("file generating\n");
     while((ftell(fin)<CInfo->FileSize)){
         preViousString= GenCompressString(fin,CInfo->BasicUnitSize,preViousString,CInfo);
         n=floor(strlen(preViousString)/8);//当binary单元数为大于等于双整字节时
         if(n>=1){
-            writeS=StringCut(preViousString,n*(8)-1);
-            writeS=BiChConverse(writeS,0,0);
-            fwrite(writeS, strlen(writeS),1,fpout);
-            charwritten+= strlen(writeS);
+            temp1=StringCut(preViousString,n*(8)-1);
+            writeS=BiChConverse(temp1,0,0);
+            free(temp1);
+            fwrite(writeS, n,1,fpout);
+            writtenchar+=n;
             free(writeS);
+            writeS=NULL;
         }
     }
     if(strlen(preViousString)<8){
@@ -388,8 +395,7 @@ void CompressFileGen(CompressInfo*CInfo,HuffmanTree*HTree,char*originPath,char*t
         preViousString=StringCombina(preViousString,complete);
         CInfo->completeSize=delta;
     }
-    writeS=BiChConverse(preViousString,0,0);
-    fwrite(writeS, strlen(writeS),1,fpout);
+    fwrite(BiChConverse(preViousString,0,0), strlen(preViousString)/8,1,fpout);
     free(writeS);
     fclose(fpout);
     fclose(fin);
@@ -401,25 +407,34 @@ void Test(CompressInfo*CInfo,HuffmanTree*HTree,char*originPath,char*targetPath){
     int n=0;
     char*preViousString="\0";
     char*writeS;
+    char *temp;
+    char*temp1;
+    char*temp2;
+    char*temp3;
     fpout= fopen(targetPath,"wb+");//写入文件头
-    fin= fopen(originPath,"rb+");
+    fin= fopen(originPath,"rb+");//读
     while((ftell(fin)<CInfo->FileSize)){
-        preViousString= StringCombina(preViousString,BiChConverse(ReadString(fin,CInfo->BasicUnitSize,  CInfo->FileSize),1,CInfo->BasicUnitSize*2));
-        n=floor(strlen(preViousString)/8);//当binary单元数为大于等于双整字节时
+        temp=ReadString(fin,CInfo->BasicUnitSize,  CInfo->FileSize);//读2*basicSize个字节
+        temp1=BiChConverse(temp,1,CInfo->BasicUnitSize*2);//转化为01串(16*basicSize bits)
+        temp2= StringCombina(preViousString,temp1);//preString =当前二进制串
+        preViousString=temp2;
+        n=floor(strlen(preViousString)/8);//当bit数为大于等于8时
         if(n>=1){
-            writeS=StringCut(preViousString,n*(8)-1);
-            writeS=BiChConverse(writeS,0,0);
-            fwrite(writeS, strlen(writeS),1,fpout);
+            writeS=StringCut(preViousString,n*(8)-1);//将整8bit切断
+            temp3=writeS;
+
+            writeS=BiChConverse(writeS,0,0);//转化为字符
+            fwrite(writeS, 2,1,fpout);//写入//TODO 问题1写入时不能用strlen
             charwritten+= strlen(writeS);
             free(writeS);
         }
     }
     printf("%d---%d\n", ftell(fin),CInfo->FileSize);
-    if(strlen(preViousString)<8){
+    if(strlen(preViousString)<8){//读完原文件,转化的不足8bit时(不可能)
         preViousString= BiChConverse(preViousString,1, strlen(preViousString));
+        writeS=BiChConverse(preViousString,0,0);
+        fwrite(writeS, strlen(writeS),1,fpout);
     }
-    writeS=BiChConverse(preViousString,0,0);
-    fwrite(writeS, strlen(writeS),1,fpout);
     free(writeS);
     fclose(fpout);
     fclose(fin);

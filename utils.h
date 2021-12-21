@@ -8,7 +8,7 @@
 #include "math.h"
 #include "string.h"
 char*DemicalToBinary(char*demical,int branch);
-char*BinaryToDemical(char*binary);
+unsigned BinaryToDemical(char*binary);
 char*BiChar(char*Binary);
 char*BinaryAdd(char*add1,char *add2);
 char*StringCut(char*a,int pos);
@@ -128,7 +128,6 @@ char*BinaryAdd(char*add1,char *add2){//二进制字符串加法
 }
 
 char*BiChConverse(char*inputS,int mode,int size){//字符和字符对应的二进制串转换，1为字符转二进制串(1模式下必须保证size1)，0为反过来
-    char ch;
     char *out1="\0";
     char *out="\0";
     char *BiCode="\0";
@@ -176,7 +175,10 @@ char*BiChConverse(char*inputS,int mode,int size){//字符和字符对应的二�
         if(len%8!=0){
             return NULL;
         }else{
-            BiCode=StringCombina(BiCode,inputS);
+            char*out1=(char*) malloc(sizeof (char )*((len/8)+1));
+            out1[len/8-1]='\0';
+            int flag=0;
+            BiCode=StringCombina(inputS,NULL);
             while(*BiCode!='\0'){
                 char* a1;
                 int i=0;
@@ -189,9 +191,10 @@ char*BiChConverse(char*inputS,int mode,int size){//字符和字符对应的二�
                     }
                     unit=unit<<1;
                 }
-                out=StringCombina(out,a);
+                out1[flag]=a[0];
+                flag++;
             }
-            return out;
+            return out1;
         }
     }
 }
@@ -250,20 +253,17 @@ char*StringCut(char*originString,int pos){
         return out;
     }
 }
-char*BinaryToDemical(char*binary){
+unsigned int BinaryToDemical(char*binary){
     if(binary==NULL){
         exit(114514);
     }
     int length= strlen(binary);
-    int i;
-    char *decimal=(char*) malloc(sizeof (char)*2);
-    decimal[1]='\0';
-    int sum=0;
-    for(i=0;i<length;++i){
-        sum+=(binary[i]=='1')? pow(2,i):0;
+    int i=0;
+    unsigned int sum=0;
+    for(i=length-1;i>=0;--i){
+        sum+=(binary[i]=='1')? pow(2,length-1-i):0;
     }
-    decimal[0]=sum+48;
-    return decimal;
+    return sum;
 }
 int file_size(char* filename)//获取文件名为filename的文件大小。
 {

@@ -12,6 +12,7 @@ typedef struct CompressNode{
     char *unit;//单元翻译过来的二进制码字符串
     char *HuffCode;//huffman编码的二进制形式
     unsigned int appearNum;//该单元出现次数
+    unsigned int flag;
 }CompressNode;typedef struct CompressInfo{
     double BasicUnitSize;//基本单元的大小
     int HuffBranch;//(huffman树叉数)
