@@ -83,10 +83,8 @@ CompressInfo *MapConstruct(double basicUnitSize,int BranchSize,char*originPath){
             CInfo->UnitSet[CInfo->UnitNum].flag=BinaryToDemical(CInfo->UnitSet[CInfo->UnitNum].unit);
             ++CInfo->UnitNum;
             ++CInfo->TotalCharNum;
-//            free(temp);
         }
         EXTERN+=1;
-//        printf("process:%d\n",EXTERN);
     }
     printf("Map construct done! Origin size is %dkb\n",EXTERN*basicUnitSize*2/1024);
     fclose(fp);
@@ -151,7 +149,7 @@ char* ReadString(FILE*fp,double basicUnitSize,int file_size){//读取basic*2单�
         chSet[previousNum]='\0';
         chSet= realloc(chSet,(int)(basicUnitSize*2+40)*sizeof(char));
         if(!chSet){
-            exit(11451415);
+
         }
         chSet[(int)(basicUnitSize*2)]=previousNum;//最后一个字符的下标+1
         return chSet;
@@ -374,7 +372,7 @@ void CompressFileGen(CompressInfo*CInfo,HuffmanTree*HTree,char*originPath,char*t
     while((ftell(fin)<CInfo->FileSize)){
         preViousString= GenCompressString(fin,CInfo->BasicUnitSize,preViousString,CInfo);
         n=floor(strlen(preViousString)/8);//当binary单元数为大于等于双整字节时
-        if(n>=1){
+        if(n>=500000||!((ftell(fin)<CInfo->FileSize))&&n>=1){
             temp1=StringCut(preViousString,n*(8)-1);
             writeS=BiChConverse(temp1,0,0);
             free(temp1);

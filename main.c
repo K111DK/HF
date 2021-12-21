@@ -9,8 +9,8 @@ int main() {
 
 
 
-    char *oriPath="C:\\Users\\35802\\Desktop\\source\\pdf.pdf";
-    char *ComPath="C:\\Users\\35802\\Desktop\\compress\\pdf.taz";
+    char *oriPath="C:\\Users\\35802\\Desktop\\source\\【量子力学（卷I）】第四版·曾谨言.pdf";
+    char *ComPath="C:\\Users\\35802\\Desktop\\compress\\【量子力学（卷I）】第四版·曾谨言.taz";
     char *DePath="C:\\Users\\35802\\Desktop\\Decompress\\";
     printf("size of file %d\n", file_size(oriPath)/1024);
     FILE *fpin,*fpout;
@@ -18,7 +18,7 @@ int main() {
     HuffmanTree *HT;
     char*pre="\0";
     CInfo=MapConstruct(1,2,oriPath);
-
+//
     HT=HuffmanTreeConstruct(CInfo);
 
 
